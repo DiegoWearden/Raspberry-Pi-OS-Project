@@ -39,12 +39,12 @@ el1_entry:
 
     mov    sp, #LOW_MEMORY
      // Initialize and start secondary cores on Raspberry Pi 4
-    ldr x1, =start_other_core   // Address to jump to for secondary cores
-    ldr x2, =0x4000009C          // Mailbox register for Core 1
+    ldr x1, =start_other_core    // Address to jump to for secondary cores
+    ldr x2, =0xE0           	 // Mailbox register for Core 1
     str x1, [x2]
-    ldr x2, =0x400000AC          // Mailbox register for Core 2
+    ldr x2, =0xE8                // Mailbox register for Core 2
     str x1, [x2]
-    ldr x2, =0x400000BC          // Mailbox register for Core 3
+    ldr x2, =0xF0                // Mailbox register for Core 3
     str x1, [x2]
 
     sev                           // Send event to wake up all cores
@@ -53,5 +53,6 @@ el1_entry:
     b     proc_hang        // should never come here
 
 start_other_core:
-    bl kernel_main
-    b proc_hang
+	// set up stack per core
+   // bl kernel_main
+    b start_other_core
