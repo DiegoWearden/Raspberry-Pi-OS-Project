@@ -25,3 +25,7 @@ delay:
     mrs x0, MPIDR_EL1      // Read MPIDR_EL1 into x0
     and x0, x0, #0xff      // Check processor id
     ret                    // Return, with the result in x0 
+
+.global monitor
+	monitor:
+	ret
