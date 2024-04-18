@@ -9,5 +9,6 @@ extern "C" int get_el(void);
 extern "C" int get_core_number(void);
 
 extern "C" void monitor(uintptr_t);
+extern "C" void wakeUpCores(void);
 
 #endif /*_BOOT_H */

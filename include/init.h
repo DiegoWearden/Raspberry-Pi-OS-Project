@@ -5,10 +5,12 @@
 extern "C" {
 #endif
 
-void kernel_main(void);
+void kernel_init(void);
 
 #ifdef __cplusplus
 }
 #endif
+
+extern "C" void uart_init_from_assembly();
 
 #endif // KERNEL_H

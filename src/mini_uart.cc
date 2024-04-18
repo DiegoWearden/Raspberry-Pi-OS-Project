@@ -12,6 +12,8 @@ void uart_send(char c)
 	put32(AUX_MU_IO_REG, c);
 }
 
+void uart_send_string(const char *str);
+
 char uart_recv(void)
 {
 	while (1)

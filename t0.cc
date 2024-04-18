@@ -1,12 +1,12 @@
-#include "debug.h"
+#include "printf.h"
 #include "critical.h"
 #include "atomic.h"
 
 static uint32_t counter = 0;
 
 void work() {
-    Debug::printf("*** hello %d\n",counter);
-    Debug::printf("*** goodbye %d\n",counter);
+    printf("*** hello %d\n",counter);
+    printf("*** goodbye %d\n",counter);
     counter ++;
 }
 

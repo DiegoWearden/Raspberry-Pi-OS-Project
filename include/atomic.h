@@ -15,33 +15,33 @@ public:
     AtomicPtr(T *x) : ptr(x) {}
     AtomicPtr<T> &operator=(T v)
     {
-        __atomic_store_n(ptr, v, __ATOMIC_SEQ_CST);
+        __atomic_store_n(ptr, v, 5);
         return *this;
     }
     operator T() const
     {
-        return __atomic_load_n(ptr, __ATOMIC_SEQ_CST);
+        return __atomic_load_n(ptr, 5);
     }
     T fetch_add(T inc)
     {
-        return __atomic_fetch_add(ptr, inc, __ATOMIC_SEQ_CST);
+        return __atomic_fetch_add(ptr, inc, 5);
     }
     T add_fetch(T inc)
     {
-        return __atomic_add_fetch(ptr, inc, __ATOMIC_SEQ_CST);
+        return __atomic_add_fetch(ptr, inc, 5);
     }
     void set(T inc)
     {
-        return __atomic_store_n(ptr, inc, __ATOMIC_SEQ_CST);
+        return __atomic_store_n(ptr, inc, 5);
     }
     T get(void)
     {
-        return __atomic_load_n(ptr, __ATOMIC_SEQ_CST);
+        return __atomic_load_n(ptr, 5);
     }
     T exchange(T v)
     {
         T ret;
-        __atomic_exchange(ptr, &v, &ret, __ATOMIC_SEQ_CST);
+        __atomic_exchange(ptr, &v, &ret, 5);
         return ret;
     }
 };
