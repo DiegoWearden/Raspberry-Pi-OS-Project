@@ -3,7 +3,7 @@
 
 #include "utils.h"
 // #include "init.h"
-#include "loop.h"
+// #include "loop.h"
 
 template <typename T>
 class AtomicPtr
@@ -42,6 +42,7 @@ public:
     {
         T ret;
         __atomic_exchange(ptr, &v, &ret, __ATOMIC_SEQ_CST);
+
         return ret;
     }
 };
@@ -80,9 +81,11 @@ public:
     }
     T exchange(T v)
     {
-        T ret;
-        __atomic_exchange(&value, &v, &ret, __ATOMIC_SEQ_CST);
-        return ret;
+        T old_value;
+        __atomic_exchange(&value, &v, &old_value, __ATOMIC_SEQ_CST); // compiles when this is commented
+        // __sync_val_compare_and_swap(&value, &v, &old_value);
+
+        return old_value;
     }
     void monitor_value()
     {
