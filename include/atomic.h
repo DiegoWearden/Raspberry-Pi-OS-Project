@@ -81,11 +81,11 @@ public:
     }
     T exchange(T v)
     {
-        T old_value;
-        __atomic_exchange(&value, &v, &old_value, __ATOMIC_SEQ_CST); // compiles when this is commented
+        // T old_value;
+        return __atomic_exchange_n(&value, &v, __ATOMIC_SEQ_CST); // compiles when this is commented
         // __sync_val_compare_and_swap(&value, &v, &old_value);
 
-        return old_value;
+        // return old_value;
     }
     void monitor_value()
     {

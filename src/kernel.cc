@@ -25,7 +25,7 @@ extern "C" void kernel_main(void)
              {
         printf("*** hello %d\n",counter);
         printf("*** goodbye %d\n",counter);
-	counter++; });
+    counter++; });
     while (1)
     {
         uart_send(uart_recv());
