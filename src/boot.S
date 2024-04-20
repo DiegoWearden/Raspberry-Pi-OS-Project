@@ -13,7 +13,6 @@ _start:
 
 proc_hang: 
     wfe
-    bl secondary
     b proc_hang
 
 
@@ -22,7 +21,6 @@ el1_entry:
     adr    x1, bss_end
     sub    x1, x1, x0
     bl     memzero
-
     mov   sp, #LOW_MEMORY
     bl    wake_up_cores
     bl    kernel_init
@@ -38,7 +36,6 @@ secondary:
     bl kernel_init
 
 wake_up_cores:
-    sev
     mov x0, #0
     adr x0, secondary
     mov x1, #0xe0
@@ -47,3 +44,4 @@ wake_up_cores:
     str x0, [x1]
     mov x1, #0xf0
     str x0, [x1]
+    sev
