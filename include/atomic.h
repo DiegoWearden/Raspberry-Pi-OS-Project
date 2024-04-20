@@ -2,49 +2,9 @@
 #define _ATOMIC_H_
 
 #include "utils.h"
+#include "printf.h"
 // #include "init.h"
-#include "loop.h"
-
-template <typename T>
-class AtomicPtr
-{
-    volatile T *ptr;
-
-public:
-    AtomicPtr() : ptr(nullptr) {}
-    AtomicPtr(T *x) : ptr(x) {}
-    AtomicPtr<T> &operator=(T v)
-    {
-        __atomic_store_n(ptr, v, 5);
-        return *this;
-    }
-    operator T() const
-    {
-        return __atomic_load_n(ptr, 5);
-    }
-    T fetch_add(T inc)
-    {
-        return __atomic_fetch_add(ptr, inc, 5);
-    }
-    T add_fetch(T inc)
-    {
-        return __atomic_add_fetch(ptr, inc, 5);
-    }
-    void set(T inc)
-    {
-        return __atomic_store_n(ptr, inc, 5);
-    }
-    T get(void)
-    {
-        return __atomic_load_n(ptr, 5);
-    }
-    T exchange(T v)
-    {
-        T ret;
-        __atomic_exchange(ptr, &v, &ret, 5);
-        return ret;
-    }
-};
+// #include "loop.h"
 
 template <typename T>
 class Atomic
@@ -78,115 +38,14 @@ public:
     {
         return __atomic_load_n(&value, __ATOMIC_SEQ_CST);
     }
-    T exchange(T v)
+    int exchange(int v)
     {
-        T ret;
-        __atomic_exchange(&value, &v, &ret, __ATOMIC_SEQ_CST);
-        return ret;
+        return atomic_exchange(&value, v);
     }
     void monitor_value()
     {
         monitor((uintptr_t)&value);
     }
 };
-
-template <>
-class Atomic<uint64_t>
-{
-public:
-    Atomic() = delete;
-    Atomic(uint64_t) = delete;
-};
-
-template <>
-class Atomic<int64_t>
-{
-public:
-    Atomic() = delete;
-    Atomic(int64_t) = delete;
-};
-
-template <typename T>
-class LockGuard
-{
-    T &it;
-
-public:
-    inline LockGuard(T &it) : it(it)
-    {
-        it.lock();
-    }
-    inline ~LockGuard()
-    {
-        it.unlock();
-    }
-};
-
-template <typename T>
-class LockGuardP
-{
-    T *it;
-
-public:
-    inline LockGuardP(T *it) : it(it)
-    {
-        if (it)
-            it->lock();
-    }
-    inline ~LockGuardP()
-    {
-        if (it)
-            it->unlock();
-    }
-};
-
-// class SpinLock
-// {
-//     Atomic<bool> taken;
-
-// public:
-//     SpinLock() : taken(false) {}
-
-//     SpinLock(const SpinLock &) = delete;
-
-//     // for debugging, etc. Allows false positives
-//     bool isMine()
-//     {
-//         return taken.get();
-//     }
-
-//     void lock(void)
-//     {
-//         taken.monitor_value();
-//         while (taken.exchange(true))
-//         {
-//             iAmStuckInALoop(true);
-//             taken.monitor_value();
-//         }
-//     }
-
-//     void unlock(void)
-//     {
-//         taken.set(false);
-//     }
-// };
-
-// class Barrier
-// {
-//     Atomic<uint32_t> counter;
-
-// public:
-//     Barrier(uint32_t counter) : counter(counter) {}
-//     Barrier(const Barrier &) = delete;
-
-//     void sync()
-//     {
-//         counter.add_fetch(-1);
-//         while (counter.get() != 0)
-//         {
-//             iAmStuckInALoop(false);
-//         }
-//     }
-// };
 
 #endif

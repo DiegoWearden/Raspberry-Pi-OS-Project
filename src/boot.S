@@ -13,18 +13,7 @@ _start:
 
 proc_hang: 
     wfe
-    mrs	x0, mpidr_el1
-    and	x0, x0,#0x3
-    cmp X0, #1
-    b.eq start_core_1
-    mrs	x0, mpidr_el1
-    and	x0, x0,#0x3
-    cmp X0, #2
-    b.eq start_core_2
-    mrs	x0, mpidr_el1
-    and	x0, x0,#0x3
-    cmp X0, #3
-    b.eq start_core_3
+    bl secondary
     b proc_hang
 
 
@@ -34,43 +23,27 @@ el1_entry:
     sub    x1, x1, x0
     bl     memzero
 
-    mov    sp, #LOW_MEMORY
-     // Initialize and start secondary cores on Raspberry Pi 3
-    ldr x1, =start_core_1    // Address to jump to for secondary cores
-    ldr x2, =0xE0           	 // Mailbox register for Core 1
-    str x1, [x2]
-
-	ldr x1, =start_core_2    // Address to jump to for secondary cores
-    ldr x2, =0xE8                // Mailbox register for Core 2
-    str x1, [x2]
-	
-	
-    ldr x1, =start_core_3    // Address to jump to for secondary cores
-    ldr x2, =0xF0                // Mailbox register for Core 3
-    str x1, [x2]
-    sev                           // Send event to wake up all cores
+    mov   sp, #LOW_MEMORY
+    bl    wake_up_cores
     bl    kernel_init
     b     proc_hang        // should never come here
 
-start_core_1:
-    ldr    x1, =LOW_MEMORY
-    ldr    x2, =PAGE_SIZE
-    add    sp, x1, x2          // sp = LOW_MEMORY + PAGE_SIZE
-    bl     kernel_init
-    b      start_core_1
+secondary:
+    mrs x0, mpidr_el1
+    and x0, x0, #0xFF
+    mov x1, #SECTION_SIZE
+    mul x1, x1, x0
+    add x1, x1, #LOW_MEMORY
+    mov sp, x1
+    bl kernel_init
 
-start_core_2:
-    ldr    x1, =LOW_MEMORY
-    ldr    x2, =PAGE_SIZE
-    add    sp, x1, x2, lsl #1  // sp = LOW_MEMORY + 2*PAGE_SIZE
-    bl     kernel_init
-    b      start_core_2
-
-start_core_3:
-    ldr    x1, =LOW_MEMORY
-    ldr    x2, =PAGE_SIZE
-    mov    x3, #3
-    mul    x2, x2, x3          // x2 = 3 * PAGE_SIZE
-    add    sp, x1, x2          // sp = LOW_MEMORY + 3*PAGE_SIZE
-    bl     kernel_init
-    b      start_core_3
+wake_up_cores:
+    sev
+    mov x0, #0
+    adr x0, secondary
+    mov x1, #0xe0
+    str x0, [x1]
+    mov x1, #0xe8
+    str x0, [x1]
+    mov x1, #0xf0
+    str x0, [x1]

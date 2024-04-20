@@ -1,24 +1,27 @@
 ARMGNU ?= aarch64-linux-gnu
 
-COPS = -Wall -nostdlib -nostartfiles -ffreestanding -Iinclude -mgeneral-regs-only -mno-outline-atomics
-DEBUG_COPS = $(COPS) -g
+# Regular compiler options
+COPS = -Wall -nostdlib -nostartfiles -ffreestanding -Iinclude -mgeneral-regs-only
 ASMOPS = -Iinclude 
+
+# Additional debug compiler options
+DEBUG_COPS = $(COPS) -g -O0
 
 BUILD_DIR = build
 SRC_DIR = src
 
 all : kernel8.img
 
-# Debug build
-debug: $(SRC_DIR)/linker.ld $(OBJ_FILES)
-	mkdir -p $(BUILD_DIR)
-	$(ARMGNU)-ld -T $(SRC_DIR)/linker.ld -o $(BUILD_DIR)/kernel8.elf $(OBJ_FILES)
-
+debug: clean kernel8.img debug_qemu
 
 clean :
-	rm -rf $(BUILD_DIR) kernel8.img kernel8.elf
+	rm -rf $(BUILD_DIR) *.img 
 
-# Rule for C++ source files
+# Command to execute debug_qemu.sh
+debug_qemu:
+	./debug_qemu.sh
+
+# Rule for C++ source files with debug options
 $(BUILD_DIR)/%_cc.o: $(SRC_DIR)/%.cc
 	mkdir -p $(@D)
 	$(ARMGNU)-g++ $(DEBUG_COPS) -MMD -c $< -o $@

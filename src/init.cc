@@ -40,7 +40,7 @@ extern "C" void kernel_init(void)
     init_printf(0, putc);
     int num = get_core_number();
     printf("Hello world: %d\r\n", num);
-    // kernelMain();
+    kernelMain();
 
     // printf("Exception level: %d\n", get_el());
     // printf("processor ID: %d\n", get_core_number());
@@ -48,4 +48,8 @@ extern "C" void kernel_init(void)
     {
         uart_send(uart_recv());
     }
+}
+
+extern "C" void print(){
+    printf("in loop???\n");
 }
