@@ -25,7 +25,7 @@ delay:
 .global get_core_number
 	get_core_number:
     mrs x0, MPIDR_EL1      // Read MPIDR_EL1 into x0
-    and x0, x0, #0x3      // Check processor id
+    and x0, x0, #0xFF      // Check processor id
     ret                    // Return, with the result in x0 
 
 .global monitor
@@ -33,34 +33,27 @@ delay:
 	ret
 
 .global atomic_exchange
-.type atomic_exchange, %function
 atomic_exchange:
-    .cfi_startproc
+    // x0 = address of value
+    // x1 = address of v (new value)
 
-    // Input:
-    // x0 = address of the value to be exchanged
-    // w1 = new value
+    // Load the new value from memory into x2
+    LDR     w2, [x1]
 
-    // Preserve registers that will be used
-    sub     sp, sp, #16
-    str     w1, [sp]         // Save new value locally
+loop:
+    // Load the current value at address x0 with acquire semantics
+    LDAXR   w3, [x0]
+    
+    // Try to store the new value x2 into address x0 with release semantics
+    STLXR   w4, w2, [x0]
+    
+    // Check if the store succeeded, w4 = 0 means success
+    CBNZ    w4, loop
 
-    // Load-Link/Store-Conditional Loop
-.Lretry:
-	bl 		print
-    ldaxr   w2, [x0]         // Load from address and set exclusive
-	
-    ldr     w1, [sp]         // Re-load new value from stack
-    stlxr   w3, w1, [x0]     // Attempt to store new value to address
-    cbnz    w3, .Lretry      // If not zero, store failed, retry
+    // If successful, the old value (x3) is in w3
+    // Move the old value to x0 to return it
+    MOV     x0, x3
 
-    // Now w2 holds the original value at the address
-    // Move the result to w0 (return value)
-    mov     w0, w2
+    RET
 
-    // Restore the stack and return
-    add     sp, sp, #16
-    ret
-
-    .cfi_endproc
 

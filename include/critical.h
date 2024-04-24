@@ -18,8 +18,7 @@ template <typename Work>
 inline void critical(Work work) {
     uint32_t thread_id = get_core_number();
     if (critical_owner != thread_id) {
-        critical_flag.exchange(1);
-        printf("gets here\n");
+        while(critical_flag.exchange(1) == 1);
         critical_owner = thread_id;
     }
     critical_depth++;
@@ -28,6 +27,7 @@ inline void critical(Work work) {
     if (critical_depth == 0) {
         critical_owner = uint32_t(-1);
         critical_flag.exchange(0);
+        printf("gets here 22222\n");
     }
 }
 

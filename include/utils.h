@@ -9,9 +9,8 @@ extern "C" int get_el(void);
 extern "C" int get_core_number(void);
 
 extern "C" void monitor(uintptr_t);
-extern "C" void wakeUpCores(void);
 
-extern "C" int atomic_exchange(volatile int* addr, int new_value);
+extern "C" int atomic_exchange(volatile int* addr, volatile int* new_value);
 
 
 

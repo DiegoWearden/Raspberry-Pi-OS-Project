@@ -217,6 +217,17 @@ void tfp_printf(const char *fmt, ...)
     va_end(va);
     }
 
+void tfp_printf_panic(const char *fmt, ...) {
+    va_list va;
+    char panic_fmt[256];
+    tfp_sprintf(panic_fmt, "PANIC: %s", fmt);
+
+    va_start(va, fmt);
+    tfp_format(stdout_putp, stdout_putf, panic_fmt, va);
+    va_end(va);
+    shutdown();
+}
+
 static void putcp(void* p,char c)
     {
     *(*((char**)p))++ = c;
@@ -232,3 +243,10 @@ void tfp_sprintf(char* s,char *fmt, ...)
     putcp(&s,0);
     va_end(va);
     }
+
+void shutdown(){
+        while (true) {
+	    asm volatile("wfe");
+    }
+}
+

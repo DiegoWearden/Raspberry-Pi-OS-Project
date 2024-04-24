@@ -7,3 +7,4 @@ qemu-system-aarch64 \
     -smp 4 \
     -serial stdio \
     -s -S
+    -append "console=ttyAMA0,115200"

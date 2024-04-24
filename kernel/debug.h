@@ -25,11 +25,11 @@ public:
             panic("*** Check [%s] failed at %s:%d\n",invariant_text,file,line);
         }
     }
-    inline static void assert(bool invariant, const char* invariant_text, const char* file, int line) {
-        if (!invariant) {
-            panic("*** Assertion [%s] failed at %s:%d\n",invariant_text,file,line);
-        }
-    }
+    // inline static void assert(bool invariant, const char* invariant_text, const char* file, int line) {
+    //     if (!invariant) {
+    //         panic("*** Assertion [%s] failed at %s:%d\n",invariant_text,file,line);
+    //     }
+    // }
     static void vsay(const char* fmt, va_list ap);
     static void say(const char* fmt, ...);
     static void shutdown();

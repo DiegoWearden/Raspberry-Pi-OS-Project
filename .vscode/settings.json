@@ -2,6 +2,23 @@
     "files.associations": {
         "memory": "cpp",
         "mutex": "cpp",
-        "shared_mutex": "cpp"
+        "shared_mutex": "cpp",
+        "atomic": "cpp",
+        "execution": "cpp",
+        "filesystem": "cpp",
+        "forward_list": "cpp",
+        "list": "cpp",
+        "xmemory": "cpp",
+        "algorithm": "cpp",
+        "cmath": "cpp",
+        "condition_variable": "cpp",
+        "deque": "cpp",
+        "future": "cpp",
+        "iosfwd": "cpp",
+        "memory_resource": "cpp",
+        "stop_token": "cpp",
+        "xhash": "cpp",
+        "xstring": "cpp",
+        "charconv": "cpp"
     }
 }

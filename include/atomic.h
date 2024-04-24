@@ -7,43 +7,34 @@
 // #include "loop.h"
 
 template <typename T>
-class Atomic
-{
+class Atomic {
     volatile T value;
 
 public:
     Atomic(T x) : value(x) {}
-    Atomic<T> &operator=(T v)
-    {
+    Atomic<T>& operator=(T v) {
         __atomic_store_n(&value, v, __ATOMIC_SEQ_CST);
         return *this;
     }
-    operator T() const
-    {
+    operator T() const {
         return __atomic_load_n(&value, __ATOMIC_SEQ_CST);
     }
-    T fetch_add(T inc)
-    {
+    T fetch_add(T inc) {
         return __atomic_fetch_add(&value, inc, __ATOMIC_SEQ_CST);
     }
-    T add_fetch(T inc)
-    {
+    T add_fetch(T inc) {
         return __atomic_add_fetch(&value, inc, __ATOMIC_SEQ_CST);
     }
-    void set(T inc)
-    {
-        return __atomic_store_n(&value, inc, __ATOMIC_SEQ_CST);
+    void set(T inc) {
+        __atomic_store_n(&value, inc, __ATOMIC_SEQ_CST);
     }
-    T get(void)
-    {
+    T get(void) {
         return __atomic_load_n(&value, __ATOMIC_SEQ_CST);
     }
-    int exchange(int v)
-    {
-        return atomic_exchange(&value, v);
+    T exchange(T v) {
+        return __atomic_exchange_n(&value, v, __ATOMIC_SEQ_CST);
     }
-    void monitor_value()
-    {
+    void monitor_value() {
         monitor((uintptr_t)&value);
     }
 };

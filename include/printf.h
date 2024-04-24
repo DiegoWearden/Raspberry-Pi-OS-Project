@@ -97,10 +97,19 @@ void init_printf(void* putp,void (*putf) (void*,char));
 
 void tfp_printf(const char *fmt, ...);
 void tfp_sprintf(char* s,char *fmt, ...);
+void tfp_printf_panic(const char *fmt, ...);
+void shutdown();
 
 void tfp_format(void* putp,void (*putf) (void*,char),const char *fmt, va_list va);
 
 #define printf tfp_printf 
+#define panic tfp_printf_panic
 #define sprintf tfp_sprintf 
+#define ASSERT(invariant) assert(invariant,#invariant,__FILE__,__LINE__)
+    inline static void assert(bool invariant, const char* invariant_text, const char* file, int line) {
+        if (!invariant) {
+            panic("*** Assertion [%s] failed at %s:%d\n",invariant_text,file,line);
+        }
+    }
 
 #endif

@@ -1,8 +1,7 @@
 #include "heap.h"
-#include "debug.h"
 #include "stdint.h"
-#include "atomic.h"
 #include "printf.h"
+#include "atomic.h"
 
 /* A first-fit heap */
 
@@ -13,7 +12,9 @@ static int *array;
 static int len;
 static int safe = 0;
 static int avail = 0;
-static SpinLock *theLock = nullptr;
+static bool isInit = false;
+
+#define MB_TO_BYTES(mb) ((mb) * 1048576)
 
 void makeTaken(int i, int ints);
 void makeAvail(int i, int ints);
@@ -123,8 +124,21 @@ int isTaken(int i) {
 }
 };
 
+void ensure_heap_size(void *base, uint32_t bytes) {
+    // uint32_t required_bytes = MB_TO_BYTES(5);
+    // if (bytes < required_bytes) {
+    //     uint32_t missing_bytes = required_bytes - bytes;
+    //     panic("Heap not big enough, at least 256 MB required. Missing %u bytes.", missing_bytes);
+    // }
+}
+
 void heapInit(void* base, size_t bytes) {
     using namespace gheith;
+    if(isInit){
+        panic("cannot initialize heap twice");
+    }
+
+    ensure_heap_size(base, bytes);
 
     printf("| heap range 0x%x 0x%x\n",(uint32_t)base,(uint32_t)base+bytes);
 
@@ -134,11 +148,15 @@ void heapInit(void* base, size_t bytes) {
     makeTaken(0,2);
     makeAvail(2,len-4);
     makeTaken(len-2,2);
-    // theLock = new SpinLock();
+    isInit = true;
 }
 
 void* malloc(size_t bytes) {
     using namespace gheith;
+    
+    if(!isInit){
+        panic("heap not initialized\n");
+    }
     //Debug::printf("malloc(%d)\n",bytes);
     if (bytes == 0) return (void*) array;
 
@@ -156,6 +174,7 @@ void* malloc(size_t bytes) {
         int countDown = 20;
         int p = avail;
         while (p != 0) {
+            
             if (!isAvail(p)) {
                 panic("block is not available in malloc %p\n",p);
             }
@@ -192,7 +211,7 @@ void free(void* p) {
     if (p == 0) return;
     if (p == (void*) array) return;
 
-    LockGuardP g{theLock};
+    // LockGuardP g{theLock};
 
     int idx = ((((uintptr_t) p) - ((uintptr_t) array)) / 4) - 1;
     sanity(idx);
@@ -225,11 +244,11 @@ void free(void* p) {
 /* C++ operators */
 /*****************/
 
+
 void* operator new(size_t size) {
-    printf("getting here3?????");
     void* p =  malloc(size);
     if (p == 0) panic("out of memory");
-    printf("getting here3?????");
+    printf("pointer: %x\n", p);
     return p;
 }
 
@@ -237,7 +256,7 @@ void operator delete(void* p) noexcept {
     return free(p);
 }
 
-void operator delete(void* p, size_t sz) {
+void operator delete(void* p, unsigned long sz) {
     return free(p);
 }
 
