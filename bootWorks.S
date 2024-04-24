@@ -8,11 +8,11 @@
 _start:
     mrs    x0, mpidr_el1
     and    x0, x0,#0xFF        // Check processor id
-    cbz    x0, master        // Hang for all non-primary CPU
+    cbz    x0, el1_entry        // Hang for all non-primary CPU
     b    proc_hang
 
 proc_hang: 
-    // wfe
+    wfe
     b     proc_hang
 
 master:
@@ -31,20 +31,13 @@ master:
     adr    x0, el1_entry
     msr    elr_el3, x0
 
-    eret
-
 el1_entry:
-    adr    x0, bss_begin
-    adr    x1, bss_end
+    adr    x0, __bss_start
+    adr    x1, __bss_end
     sub    x1, x1, x0
     bl     memzero
-//.extern pickKernelStack
-    mov    sp, #LOW_MEMORY
-     // Call pickKernelStack to get the stack pointer value
-    bl     pickKernelStack
-    mov    sp, x0            // Set stack pointer to the value returned by pickKernelStack
 
-   // mov    sp, #LOW_MEMORY
+    mov    sp, #LOW_MEMORY
      // Initialize and start secondary cores on Raspberry Pi 3
     //ldr x1, =start_core_1    // Address to jump to for secondary cores
     //ldr x2, =0xE0           	 // Mailbox register for Core 1
@@ -62,7 +55,7 @@ el1_entry:
     //str x1, [x2]
    // sev                           // Send event to wake up all cores
 
-    bl    kernelInit
+    bl    kernel_main
     b     proc_hang        // should never come here
 
 start_other_core:

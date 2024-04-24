@@ -2,8 +2,8 @@
 #define _ATOMIC_H_
 
 #include "utils.h"
-// #include "init.h"
-// #include "loop.h"
+//  #include "init.h"
+//  #include "loop.h"
 
 template <typename T>
 class AtomicPtr
@@ -87,10 +87,10 @@ public:
 
         // return old_value;
     }
-    void monitor_value()
-    {
-        monitor((uintptr_t)&value);
-    }
+    // void monitor_value()
+    // {
+    //     monitor((uintptr_t)&value);
+    // }
 };
 
 template <>

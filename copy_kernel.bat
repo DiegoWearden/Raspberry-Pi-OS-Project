@@ -1,3 +1,3 @@
 @echo off
-copy ".\kernel8.img" D:\
+copy ".\kernel8.img" E:\
 

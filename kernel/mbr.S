@@ -167,10 +167,10 @@ kk:
     .extern kernelInit
 
     mov $tempStack,%esp
-    call pickKernelStack
-    mov %eax,%esp
-    call kernelInit
-    ud2
+    call pickKernelStack # ret value is adr we want to set sp to
+    mov %eax,%esp # eax has stack adr, move into esp
+    call kernelInit # now we can initialize the kernel
+    ud2 # should not go here. used to generate exception
 
 
 /***********/

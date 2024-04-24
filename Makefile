@@ -1,7 +1,7 @@
 ARMGNU ?= aarch64-linux-gnu
 
-COPS = -Wall -nostdlib -nostartfiles -ffreestanding -Iinclude -mgeneral-regs-only -mno-outline-atomics
-ASMOPS = -Iinclude 
+COPS = -Wall -nostdlib -nostartfiles -ffreestanding -Iinclude -mgeneral-regs-only -mno-outline-atomics -fpermissive
+ASMOPS = -Iinclude
 
 BUILD_DIR = build
 SRC_DIR = src
@@ -31,3 +31,11 @@ DEP_FILES = $(OBJ_FILES:%.o=%.d)
 kernel8.img: $(SRC_DIR)/linker.ld $(OBJ_FILES)
 	$(ARMGNU)-ld -T $(SRC_DIR)/linker.ld -o $(BUILD_DIR)/kernel8.elf  $(OBJ_FILES)
 	$(ARMGNU)-objcopy $(BUILD_DIR)/kernel8.elf -O binary kernel8.img
+
+armstub/build/armstub_s.o: armstub/src/armstub.S
+	mkdir -p $(@D)
+	$(ARMGNU)-gcc $(COPS) -MMD -c $< -o $@
+
+armstub: armstub/build/armstub_s.o
+	$(ARMGNU)-ld --section-start=.text=0 -o armstub/build/armstub.elf armstub/build/armstub_s.o
+	$(ARMGNU)-objcopy armstub/build/armstub.elf -O binary armstub-new.bin
