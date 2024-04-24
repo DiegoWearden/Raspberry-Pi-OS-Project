@@ -38,7 +38,6 @@ namespace dwearden {
         uint32_t the_stack[(8 * 1024) / sizeof(uint32_t)];
 
         TCB(Work work) : work(work) {
-            printf("stuck here4????\n");
             
             auto bi = ((8 * 1024) / sizeof(uint32_t)) - 1;
 
@@ -64,8 +63,10 @@ namespace dwearden {
 template <typename T>
 void thread(T work) {
     using namespace dwearden;
-    TCB tcb(work);
-    ready_queues.add(&tcb);
+    printf("creating TCB on heap...\n");
+    auto tcb = new TCB(work);
+    ready_queues.add(tcb);
+    printf("added thread to ready queue\n");
 }
 
 #endif

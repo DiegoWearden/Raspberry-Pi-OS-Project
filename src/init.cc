@@ -47,6 +47,7 @@ void kernelMain_t1(void) {
     int waitingFor = 5;
 
     for (int i=0; i<4; i++) {
+        printf("creating thread %d\n", i);
         thread([&waitingFor] {
             waitingFor--;
             while (waitingFor != 0) yield();
@@ -55,7 +56,6 @@ void kernelMain_t1(void) {
 
     waitingFor--;
     while (waitingFor != 0) {
-        printf("stuck here????\n");
         yield();
     }
 
@@ -73,9 +73,10 @@ extern "C" void kernel_init(void)
     uart_init();
     init_printf(0, putc);
     int num = get_core_number();
-    printf("core number: %d\r\n", num);
+    printf("\n\ncore number: %d\r\n", num);
     printf("Exception level: %d\n", get_el());
     heapInit((void*)HEAP_START, HEAP_SIZE);
+    threadsInit();
     kernelMain_t1();
     void* thing = malloc(sizeof(int));
     printf("sizeof(thing): %x", thing);

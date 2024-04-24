@@ -44,6 +44,7 @@ namespace dwearden {
 void threadsInit() {
     using namespace dwearden;
     for (uint32_t i = 0; i < 1; i++) {
+        printf("allocating dummy threads...\n");
         running_threads[i] = new DummyThread();
     }
 }
@@ -53,7 +54,6 @@ void yield() {
     auto me = get_core_number();
     auto next_thread = ready_queues.remove();
     if (next_thread == nullptr) {
-        printf("returning null\n");
         return;
     }
     ASSERT(running_threads[me] != nullptr);
@@ -61,7 +61,7 @@ void yield() {
     next_thread->prev = old_thread;
     running_threads[me] = next_thread;
 
-    printf("right before context switch\n");
+    printf("right before context switch. still need to implement...\n");
     context_switch(&old_thread->stackPointer, next_thread->stackPointer);
     printf("right after context switch\n");
 
