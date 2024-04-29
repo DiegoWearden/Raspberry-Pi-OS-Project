@@ -172,6 +172,7 @@ void heapInit(void *base, size_t bytes)
 
 void *malloc(size_t bytes)
 {
+    printf("malloc !\n");
     using namespace gheith;
     // Debug::printf("malloc(%d)\n",bytes);
     if (bytes == 0)
@@ -230,7 +231,7 @@ void *malloc(size_t bytes)
         }
         res = &array[it + 1];
     }
-
+    printf("malloc end !\n");
     return res;
 }
 
@@ -248,7 +249,7 @@ void free(void *p)
     sanity(idx);
     if (!isTaken(idx))
     {
-        printf("freeing free block, p:%x idx:%d\n", (uint32_t)p, (int32_t)idx);
+        printf("freeing free block, p:%x idx:%d\n", (uint64_t)p, (int64_t)idx);
 
         // Debug::panic("freeing free block, p:%x idx:%d\n", (uint32_t)p, (int32_t)idx);
         return;
@@ -279,12 +280,15 @@ void free(void *p)
 /* C++ operators */
 /*****************/
 
-void *operator new(size_t size)
+void *operator new(uint32_t size)
 {
+    printf("new!\n");
     void *p = malloc(size);
+    printf("return from malloc %x\n", p);
     if (p == 0)
         printf("out of memory");
     // Debug::panic("out of memory");
+    printf("return from new %x\n", p);
     return p;
 }
 
@@ -293,17 +297,20 @@ void operator delete(void *p) noexcept
     return free(p);
 }
 
-void operator delete(void *p, size_t sz)
+void operator delete(void *p, uint32_t sz)
 {
     return free(p);
 }
 
-void *operator new[](size_t size)
+void *operator new[](uint32_t size)
 {
+    printf("new!\n");
     void *p = malloc(size);
+    printf("return from malloc %x\n", p);
     if (p == 0)
         printf("out of memory");
     // Debug::panic("out of memory");
+    printf("return from new %x\n", p);
     return p;
 }
 
@@ -312,7 +319,7 @@ void operator delete[](void *p) noexcept
     return free(p);
 }
 
-void operator delete[](void *p, size_t sz)
+void operator delete[](void *p, uint32_t sz)
 {
     return free(p);
 }

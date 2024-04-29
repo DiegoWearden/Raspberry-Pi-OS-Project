@@ -12,6 +12,7 @@
 // #include "crt.h"
 #include "stdint.h"
 #include "atomic.h"
+#include "threads.h"
 
 struct Stack
 {
@@ -162,15 +163,29 @@ extern "C" void kernelInit(void)
         //     while (SMP::running <= id)
         //         ;
         // }
+        threadsInit();
     }
     else
     {
         // SMP::running.fetch_add(1);
         // SMP::init(false);
     }
-
-    // starting->sync();
+    // if (get_core_number() == 0)
+    // {
+    //     thread([]
+    //            {
+    //                kernel_main();
+    //                // ::shutdown();
+    //            });
+    // }
     kernel_main();
+    // starting->sync();
+    stop();
+    printf("fake shutdown");
+    while (1)
+    {
+        uart_send(uart_recv());
+    }
     // stopping->sync();
     // if (SMP::me() == 0)
     // {

@@ -29,7 +29,7 @@
 #define SCR_RESERVED (3 << 4)
 #define SCR_RW (1 << 10)
 #define SCR_NS (1 << 0)
-#define SCR_VALUE (SCR_RESERVED | SCR_RW | SCR_NS)
+#define SCR_VALUE (SCR_RESERVED | SCR_RW | SCR_NS) // 10000110001
 
 // ***************************************
 // SPSR_EL3, Saved Program Status Register (EL3) Page 389 of AArch64-Reference-Manual.
@@ -38,6 +38,6 @@
 #define SPSR_MASK_ALL (7 << 6)
 #define SPSR_EL1h (5 << 0)
 // #define SPSR_EL2h (9 << 0)
-#define SPSR_VALUE (SPSR_MASK_ALL | SPSR_EL1h)
+#define SPSR_VALUE (SPSR_MASK_ALL | SPSR_EL1h) // 111000101
 
 #endif

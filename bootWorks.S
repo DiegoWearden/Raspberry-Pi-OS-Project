@@ -32,30 +32,14 @@ master:
     msr    elr_el3, x0
 
 el1_entry:
-    adr    x0, __bss_start
+    adr    x0, __bss_start // BSS is used for data that is declared but not initialized
     adr    x1, __bss_end
     sub    x1, x1, x0
-    bl     memzero
+    bl     memzero // zero out BSS section
 
     mov    sp, #LOW_MEMORY
-     // Initialize and start secondary cores on Raspberry Pi 3
-    //ldr x1, =start_core_1    // Address to jump to for secondary cores
-    //ldr x2, =0xE0           	 // Mailbox register for Core 1
-    //str x1, [x2]
-	//sev  
 
-	//ldr x1, =start_core_2    // Address to jump to for secondary cores
-    //ldr x2, =0xE8                // Mailbox register for Core 2
-    //str x1, [x2]
-	//sev  
-	
-	//
-   // ldr x1, =start_core_3    // Address to jump to for secondary cores
-    //ldr x2, =0xF0                // Mailbox register for Core 3
-    //str x1, [x2]
-   // sev                           // Send event to wake up all cores
-
-    bl    kernel_main
+    bl    kernel_main // core zero calls kernel_init
     b     proc_hang        // should never come here
 
 start_other_core:

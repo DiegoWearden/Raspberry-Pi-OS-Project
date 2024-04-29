@@ -46,7 +46,7 @@ el1_entry:
 
    // mov    sp, #LOW_MEMORY
      // Initialize and start secondary cores on Raspberry Pi 3
-    //ldr x1, =start_core_1    // Address to jump to for secondary cores
+    // ldr x1, =start_core_1    // Address to jump to for secondary cores
     //ldr x2, =0xE0           	 // Mailbox register for Core 1
     //str x1, [x2]
 	//sev  

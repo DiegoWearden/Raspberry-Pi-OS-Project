@@ -1,6 +1,6 @@
 ARMGNU ?= aarch64-linux-gnu
 
-COPS = -Wall -nostdlib -nostartfiles -ffreestanding -Iinclude -mgeneral-regs-only -mno-outline-atomics -fpermissive
+COPS = -Wall -nostdlib -nostartfiles -ffreestanding -Iinclude -mgeneral-regs-only -mno-outline-atomics -fpermissive -fno-rtti -fno-exceptions
 ASMOPS = -Iinclude
 
 BUILD_DIR = build

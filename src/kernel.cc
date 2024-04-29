@@ -3,15 +3,39 @@
 #include "printf.h"
 #include "utils.h"
 #include "critical.h"
-#include "heap.h"
+#include "threads.h"
+
+// -fno-rtti -fno-exceptions
+
+class Foo
+{
+public:
+    int rah;
+    Foo() : rah(0)
+    {
+    }
+
+    int getRah()
+    {
+        return rah;
+    }
+
+    void setRah(int x)
+    {
+        rah = x;
+    }
+};
 
 class Thing
 {
+public:
     int me;
+    Foo *theFoo;
 
 public:
     Thing() : me(0)
     {
+        // theFoo = new Foo();
     }
     int who()
     {
@@ -37,20 +61,19 @@ static uint32_t counter = 0;
 
 extern "C" void kernel_main(void)
 {
-    // uart_init();
-    // uart_send_string("Hello, world!\n");
-    // init_printf(0, putchar);
-
     printf("Hello world from the kernel!\n");
     printf("Exception level: %d\n", get_el());
     printf("processor ID: %d\n", get_core_number());
     printf("creating a struct\n");
-    Thing *mything = new Thing;
+    Thing *mything = new Thing();
     printf("thing created\n");
     printf("%d\n", mything->who());
-    Thing *mything2 = new Thing;
+    // printf("calling foo inside of thing 1 %d\n", mything->theFoo->getRah());
+    Thing *mything2 = new Thing();
     printf("thing2 created\n");
+    // mything2->theFoo->setRah(1);
     printf("%d\n", mything2->who());
+    // printf("calling foo inside of thing 2 %d\n", mything2->theFoo->getRah());
 
     critical([]
              {
