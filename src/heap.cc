@@ -9,8 +9,8 @@
 namespace gheith {
     
 static int64_t *array;
-static int len;
-static int safe = 0;
+static int64_t len;
+static int64_t safe = 0;
 static int64_t avail = 0;
 static bool isInit = false;
 
@@ -144,7 +144,7 @@ void heapInit(void* base, size_t bytes) {
 
     /* can't say new becasue we're initializing the heap */
     array = (int64_t*) base;
-    len = bytes / 4;
+    len = bytes / 8;
     makeTaken(0,2);
     makeAvail(2,len-4);
     makeTaken(len-2,2);
@@ -176,7 +176,7 @@ void* malloc(size_t bytes) {
         while (p != 0) {
             
             if (!isAvail(p)) {
-                panic("block is not available in malloc %p\n",p);
+                panic("block is not available in malloc %x\n",p);
             }
             int sz = size(p);
 

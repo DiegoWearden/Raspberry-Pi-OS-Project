@@ -49,7 +49,6 @@ void kernelMain_t1(void) {
     for (int i=0; i<4; i++) {
         printf("creating thread %d\n", i);
         thread([&waitingFor] {
-            printf("in thread\n");
             waitingFor--;
             while (waitingFor != 0) yield();
         });
@@ -87,8 +86,12 @@ extern "C" void kernel_init(void)
     heapInit((void*)HEAP_START, HEAP_SIZE);
     threadsInit();
 
+    thread([] {
         kernelMain_t1();
-
+        shutdown();
+    });
+    
+    stop();
     // printf("processor ID: %d\n", get_core_number());
     while (1)
     {
