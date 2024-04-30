@@ -10,7 +10,7 @@
 // threads.cc -
 // ------------
 
-extern "C" void context_switch(uint32_t **saveOldSpHere, uint32_t *newSP);
+extern "C" void context_switch(uint64_t **saveOldSpHere, uint64_t *newSP);
 // global ready queue
 namespace alogx
 {
@@ -50,10 +50,9 @@ void threadsInit() // place to put any intialization logic
     for (int i = 0; i < 4; i++)
     {
         printf("dummy #%d\n", i);
-        printf("running threads ard %x\n", &runningThreads);
         runningThreads[i] = new DummyThread();
         printf("dummy created \n");
-        // runningThreads[i]->done.set(true);
+        runningThreads[i]->done.set(true);
     }
 }
 
@@ -138,13 +137,15 @@ namespace alogx
 
     void clearZombies()
     {
+        printf("clearing\n");
         auto killMe = zombieQ.remove();
-        while (killMe)
+        while (killMe != 0)
         {
             // bool was = Interrupts::disable();
             delete killMe;
             // Interrupts::restore(was);
             killMe = zombieQ.remove();
         }
+        printf("done clearing\n");
     }
 };

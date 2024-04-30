@@ -8,7 +8,7 @@
 namespace gheith
 {
 
-    static int *array;
+    static int64_t *array;
     static int len;
     static int safe = 0;
     static int avail = 0;
@@ -49,14 +49,12 @@ namespace gheith
             if ((i < 0) || (i >= len))
             {
                 printf("bad header index %d\n", i);
-                // Debug::panic("bad header index %d\n", i);
                 return i;
             }
             int footer = footerFromHeader(i);
             if ((footer < 0) || (footer >= len))
             {
                 printf("bad footer index %d\n", footer);
-                // Debug::panic("bad footer index %d\n", footer);
                 return i;
             }
             int hv = array[i];
@@ -65,7 +63,6 @@ namespace gheith
             if (hv != fv)
             {
                 printf("bad block at %d, hv:%d fv:%d\n", i, hv, fv);
-                // Debug::panic("bad block at %d, hv:%d fv:%d\n", i, hv, fv);
                 return i;
             }
         }
@@ -159,11 +156,10 @@ void heapInit(void *base, size_t bytes)
     using namespace gheith;
 
     printf("| heap range 0x%x 0x%x\n", (uint32_t)base, (uint32_t)base + bytes);
-    // Debug::printf("| heap range 0x%x 0x%x\n", (uint32_t)base, (uint32_t)base + bytes);
 
     /* can't say new becasue we're initializing the heap */
-    array = (int *)base;
-    len = bytes / 4;
+    array = (int64_t *)base;
+    len = bytes / 8;
     makeTaken(0, 2);
     makeAvail(2, len - 4);
     makeTaken(len - 2, 2);
@@ -172,15 +168,14 @@ void heapInit(void *base, size_t bytes)
 
 void *malloc(size_t bytes)
 {
-    printf("malloc !\n");
     using namespace gheith;
-    // Debug::printf("malloc(%d)\n",bytes);
+    // printf("malloc(%d)\n",bytes);
     if (bytes == 0)
         return (void *)array;
 
-    int ints = ((bytes + 3) / 4) + 2;
-    if (ints < 4)
-        ints = 4;
+    int ints = ((bytes + 7) / 8) + 2;
+    if (ints < 8)
+        ints = 8;
 
     // LockGuardP g{theLock};
 
@@ -197,7 +192,6 @@ void *malloc(size_t bytes)
             if (!isAvail(p))
             {
                 printf("block is not available in malloc %p\n", p);
-                // Debug::panic("block is not available in malloc %p\n", p);
             }
             int sz = size(p);
 
@@ -231,7 +225,7 @@ void *malloc(size_t bytes)
         }
         res = &array[it + 1];
     }
-    printf("malloc end !\n");
+
     return res;
 }
 
@@ -243,15 +237,13 @@ void free(void *p)
     if (p == (void *)array)
         return;
 
-    // LockGuardP g{theLock};
+    //  LockGuardP g{theLock};
 
-    int idx = ((((uintptr_t)p) - ((uintptr_t)array)) / 4) - 1;
+    int idx = ((((uintptr_t)p) - ((uintptr_t)array)) / 8) - 1;
     sanity(idx);
     if (!isTaken(idx))
     {
-        printf("freeing free block, p:%x idx:%d\n", (uint64_t)p, (int64_t)idx);
-
-        // Debug::panic("freeing free block, p:%x idx:%d\n", (uint32_t)p, (int32_t)idx);
+        printf("freeing free block, p:%x idx:%d\n", (uint32_t)p, (int32_t)idx);
         return;
     }
 
@@ -280,15 +272,11 @@ void free(void *p)
 /* C++ operators */
 /*****************/
 
-void *operator new(uint32_t size)
+void *operator new(size_t size) noexcept
 {
-    printf("new!\n");
     void *p = malloc(size);
-    printf("return from malloc %x\n", p);
     if (p == 0)
         printf("out of memory");
-    // Debug::panic("out of memory");
-    printf("return from new %x\n", p);
     return p;
 }
 
@@ -297,20 +285,16 @@ void operator delete(void *p) noexcept
     return free(p);
 }
 
-void operator delete(void *p, uint32_t sz)
+void operator delete(void *p, unsigned long sz) noexcept
 {
     return free(p);
 }
 
-void *operator new[](uint32_t size)
+void *operator new[](size_t size) noexcept
 {
-    printf("new!\n");
     void *p = malloc(size);
-    printf("return from malloc %x\n", p);
     if (p == 0)
         printf("out of memory");
-    // Debug::panic("out of memory");
-    printf("return from new %x\n", p);
     return p;
 }
 
@@ -319,7 +303,7 @@ void operator delete[](void *p) noexcept
     return free(p);
 }
 
-void operator delete[](void *p, uint32_t sz)
+void operator delete[](void *p, unsigned long sz) noexcept
 {
     return free(p);
 }

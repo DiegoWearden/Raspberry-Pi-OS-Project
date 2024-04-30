@@ -11,7 +11,9 @@ class Queue
     // LockType lock;
 
 public:
-    Queue() : first(nullptr), last(nullptr) {}
+    Queue() : first(nullptr), last(nullptr)
+    {
+    }
     Queue(const Queue &) = delete;
 
     // void monitor_add()
@@ -26,17 +28,23 @@ public:
 
     void add(T *t)
     {
+        printf("adding to queue\n");
         // LockGuard g{lock};
+        printf("t adr %x\n", t);
         t->next = nullptr;
+        printf("first %x\n", first);
         if (first == nullptr)
         {
+            printf("first is null\n");
             first = t;
         }
         else
         {
+            printf("first is not null\n");
             last->next = t;
         }
         last = t;
+        printf("done adding to queue\n");
     }
 
     T *remove()

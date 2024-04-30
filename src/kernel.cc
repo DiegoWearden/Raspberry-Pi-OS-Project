@@ -4,6 +4,7 @@
 #include "utils.h"
 #include "critical.h"
 #include "threads.h"
+#include "heap.h"
 
 // -fno-rtti -fno-exceptions
 
@@ -61,6 +62,7 @@ static uint32_t counter = 0;
 
 extern "C" void kernel_main(void)
 {
+    using namespace alogx;
     printf("Hello world from the kernel!\n");
     printf("Exception level: %d\n", get_el());
     printf("processor ID: %d\n", get_core_number());
@@ -68,11 +70,12 @@ extern "C" void kernel_main(void)
     Thing *mything = new Thing();
     printf("thing created\n");
     printf("%d\n", mything->who());
-    // printf("calling foo inside of thing 1 %d\n", mything->theFoo->getRah());
+    //  printf("calling foo inside of thing 1 %d\n", mything->theFoo->getRah());
     Thing *mything2 = new Thing();
     printf("thing2 created\n");
     // mything2->theFoo->setRah(1);
     printf("%d\n", mything2->who());
+
     // printf("calling foo inside of thing 2 %d\n", mything2->theFoo->getRah());
 
     critical([]
