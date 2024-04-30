@@ -221,7 +221,6 @@ void tfp_printf_panic(const char *fmt, ...) {
     va_list va;
     char panic_fmt[256];
     tfp_sprintf(panic_fmt, "PANIC: %s", fmt);
-
     va_start(va, fmt);
     tfp_format(stdout_putp, stdout_putf, panic_fmt, va);
     va_end(va);

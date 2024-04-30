@@ -19,6 +19,13 @@
         "stop_token": "cpp",
         "xhash": "cpp",
         "xstring": "cpp",
-        "charconv": "cpp"
+        "charconv": "cpp",
+        "locale": "cpp",
+        "ostream": "cpp",
+        "streambuf": "cpp",
+        "thread": "cpp",
+        "xiosbase": "cpp",
+        "xlocale": "cpp",
+        "xlocinfo": "cpp"
     }
 }

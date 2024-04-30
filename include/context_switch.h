@@ -1,1 +1,1 @@
-extern "C" void context_switch(uint32_t** save_old_sp_here, uint32_t* new_sp);
+extern "C" void context_switch(uint64_t** save_old_sp_here, uint64_t* new_sp);

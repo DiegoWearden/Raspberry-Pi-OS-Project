@@ -49,6 +49,7 @@ void kernelMain_t1(void) {
     for (int i=0; i<4; i++) {
         printf("creating thread %d\n", i);
         thread([&waitingFor] {
+            printf("in thread\n");
             waitingFor--;
             while (waitingFor != 0) yield();
         });
@@ -73,16 +74,21 @@ extern "C" void kernel_init(void)
     uart_init();
     init_printf(0, putc);
     int num = get_core_number();
-    printf("\n\ncore number: %d\r\n", num);
+    uart_send_string("Hello, world!\n");
+    uart_send_string("uart initialized\n");
+    printf("printf initialized!!!\n");
+    printf("\ncore number: %d\r\n", num);
     printf("Exception level: %d\n", get_el());
+    printf("\n| What just happened? Why am I here?\n");
+    printf("| totalProcs %d\n", 4); // rasp pi has 4 cores
+    printf("| memSize 0x%x %dMB\n", // rasp pi has 1 gb = 1000MB
+               1000,
+               1000);
     heapInit((void*)HEAP_START, HEAP_SIZE);
     threadsInit();
-    kernelMain_t1();
-    void* thing = malloc(sizeof(int));
-    printf("sizeof(thing): %x", thing);
-    char *string = new char[sizeof(int)];
-    printf("sizeof(string): %x", string);
-    delete thing;
+
+        kernelMain_t1();
+
     // printf("processor ID: %d\n", get_core_number());
     while (1)
     {
@@ -92,4 +98,8 @@ extern "C" void kernel_init(void)
 
 extern "C" void print(){
     printf("in loop???\n");
+}
+
+extern "C" void print_sp(uint64_t sp) {
+    printf("Stack Pointer: 0x%x\n", sp);
 }

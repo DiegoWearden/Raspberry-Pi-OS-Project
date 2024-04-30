@@ -156,9 +156,9 @@ void* malloc(size_t bytes) {
         int countDown = 20;
         int p = avail;
         while (p != 0) {
-            if (!isAvail(p)) {
-                panic("block is not available in malloc %p\n",p);
-            }
+            // if (!isAvail(p)) {
+            //     panic("block is not available in malloc %p\n",p);
+            // }
             int sz = size(p);
 
             if (sz >= ints) {

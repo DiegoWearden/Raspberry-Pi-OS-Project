@@ -4,7 +4,7 @@ ARMGNU ?= aarch64-linux-gnu
 
 # Update COPS for C++ by adding C++ specific flags if necessary
 CXXOPS = -DRPI_VERSION=$(RPI_VERSION) -Wall -nostdlib -nostartfiles -ffreestanding \
-         -Iinclude -mgeneral-regs-only -mno-outline-atomics -fpermissive  -fno-rtti -fno-exceptions
+         -Iinclude -mgeneral-regs-only -mno-outline-atomics -fpermissive -fno-rtti -fno-exceptions
 
 DEBUG_COPS = $(CXXOPS) -g -O0
 

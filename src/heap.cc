@@ -8,10 +8,10 @@
 
 namespace gheith {
     
-static int *array;
+static int64_t *array;
 static int len;
 static int safe = 0;
-static int avail = 0;
+static int64_t avail = 0;
 static bool isInit = false;
 
 #define MB_TO_BYTES(mb) ((mb) * 1048576)
@@ -143,7 +143,7 @@ void heapInit(void* base, size_t bytes) {
     printf("| heap range 0x%x 0x%x\n",(uint32_t)base,(uint32_t)base+bytes);
 
     /* can't say new becasue we're initializing the heap */
-    array = (int*) base;
+    array = (int64_t*) base;
     len = bytes / 4;
     makeTaken(0,2);
     makeAvail(2,len-4);
