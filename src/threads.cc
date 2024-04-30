@@ -52,7 +52,6 @@ void threadsInit() {
 
 void yield() {
     using namespace dwearden;
-    printf("help meeeeeeee4\n");
     auto me = get_core_number();
     auto next_thread = ready_queues.remove();
     if (next_thread == nullptr) {
